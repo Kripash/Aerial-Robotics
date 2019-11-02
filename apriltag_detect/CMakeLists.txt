@@ -12,11 +12,13 @@ set (CMAKE_CXX_STANDARD 11)
 
 
 find_package(catkin REQUIRED COMPONENTS
+  cmake_modules
   roscpp
   rospy
   sensor_msgs
   std_msgs
   geometry_msgs
+  #apriltag_ros
   cv_bridge
   image_geometry
   image_transport
@@ -25,27 +27,28 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(OpenCV REQUIRED)
-find_package(PkgConfig REQUIRED)
+find_package(PkgConfig)
 pkg_search_module(apriltag REQUIRED apriltag)
 set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
 link_directories(${apriltag_LIBDIR})
 
-
 catkin_package(
-  INCLUDE_DIRS include
-  CATKIN_DEPENDS
-    cv_bridge
-    geometry_msgs
-    image_transport
-    roscpp
-    sensor_msgs
-    std_msgs
-    tf
-  DEPENDS
-    OpenCV
-    apriltag
+ INCLUDE_DIRS include
+ CATKIN_DEPENDS
+   cv_bridge
+   geometry_msgs
+   image_transport
+   #message_runtime
+   roscpp
+   sensor_msgs
+   std_msgs
+   tf
+ DEPENDS
+   OpenCV
+   apriltag
+ LIBRARIES
+ ${PROJECT_NAME}_tag_detector
 )
-
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
@@ -54,30 +57,21 @@ include_directories(
 )
 
 
-#add_library(${PROJECT_NAME}
-#  src/opencv_demo.cc
-#  ${catkin_LIBRARIES}
-#)
+add_library(${PROJECT_NAME}_tag_detector
+  src/TagDetector.cpp
+  ${catkin_LIBRARIES}
+)
 
 
-add_executable(detect_demo src/opencv_demo.cc)
-add_dependencies(detect_demo ${catkin_EXPORTED_TARGETS})
-target_link_libraries(detect_demo ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 
-add_executable(demo src/demo.cpp)
-add_dependencies(demo ${catkin_EXPORTED_TARGETS})
+add_executable(demo src/opencv_demo.cc)
 target_link_libraries(demo ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+add_dependencies(demo ${catkin_EXPORTED_TARGETS})
 
 add_executable(detector src/tag_detection_node.cpp)
-target_link_libraries(detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
-add_dependencies(detector ${catkin_EXPORTED_TARGETS})
+target_link_libraries(detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+add_dependencies(detector ${PROJECT_NAME}_tag_detector ${catkin_EXPORTED_TARGETS})
 
-#install(TARGETS
-#  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#  demo
-#)
 
 
 ## System dependencies are found with CMake's conventions
