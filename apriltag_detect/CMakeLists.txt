@@ -9,14 +9,63 @@ set (CMAKE_CXX_STANDARD 11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
+
 find_package(catkin REQUIRED COMPONENTS
+  cmake_modules
   roscpp
   rospy
   sensor_msgs
   std_msgs 
   geometry_msgs 
-  apriltag_ros
+  #apriltag_ros
+  cv_bridge
+  image_geometry
+  image_transport
+  message_generation
+  tf
 )
+
+find_package(OpenCV REQUIRED) 
+find_package(PkgConfig)
+pkg_search_module(apriltag REQUIRED apriltag)
+set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
+link_directories(${apriltag_LIBDIR})
+
+#catkin_package(
+#  INCLUDE_DIRS include
+#  CATKIN_DEPENDS
+#    cv_bridge
+#    geometry_msgs
+#    image_transport
+#    #message_runtime
+#    roscpp
+#    sensor_msgs
+#    std_msgs
+#    tf
+#  DEPENDS
+#    OpenCV
+#    apriltag
+#  LIBRARIES
+#)
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${apriltag_INCLUDE_DIRS}
+)
+
+
+add_library(${PROJECT_NAME}
+  src/opencv_demo.cc
+  ${catkin_LIBRARIES}
+)
+
+
+  
+add_executable(demo src/opencv_demo.cc)
+target_link_libraries(demo ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+add_dependencies(demo ${catkin_EXPORTED_TARGETS})
 
 
 
@@ -122,27 +171,6 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
-)
-
-
-#find_package(apriltag REQUIRED)
-find_package(OpenCV REQUIRED) 
-#include_directories(${apriltag_INCLUDE_DIRS})
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-add_library(${PROJECT_NAME}
-  src/opencv_demo.cc
-  ${catkin_LIBRARIES}
-)
-
-
-  
-add_executable(demo src/opencv_demo.cc)
-target_link_libraries(demo ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
-add_dependencies(demo ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify additional locations of header files
