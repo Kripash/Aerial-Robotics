@@ -15,8 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
-  std_msgs 
-  geometry_msgs 
+  std_msgs
+  geometry_msgs
   cv_bridge
   image_geometry
   image_transport
@@ -24,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
 )
 
-find_package(OpenCV REQUIRED) 
+find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(apriltag REQUIRED apriltag)
 set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
@@ -68,7 +68,9 @@ add_executable(demo src/demo.cpp)
 add_dependencies(demo ${catkin_EXPORTED_TARGETS})
 target_link_libraries(demo ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 
-
+add_executable(detector src/tag_detection_node.cpp)
+target_link_libraries(detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+add_dependencies(detector ${catkin_EXPORTED_TARGETS})
 
 #install(TARGETS
 #  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

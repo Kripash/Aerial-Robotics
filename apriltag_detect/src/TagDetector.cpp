@@ -1,0 +1,6 @@
+#include "TagDetector"
+
+TagDetector::TagDetector():
+{
+
+}
