@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="camera_name" default="/ptgrey_node/cam"/>
+  <arg name="camera_frame" default="world"/>
+  <arg name="image_topic" default="image_raw"/>
+  <arg name="cam_info_topic" default="camera_info"/>
+  <node name="detector" pkg="apriltag_detect" type="detector" output="screen"/>
+</launch>

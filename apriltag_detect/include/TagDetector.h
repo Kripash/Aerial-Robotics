@@ -22,8 +22,8 @@ private:
   void detectTag(const sensor_msgs::ImageConstPtr& image);
 
 public:
-  TagDetector(int argc, char **argv, const string& node_name);
+  TagDetector();
   ~TagDetector();
 
-  void init(int argc, char **argv, const string& node_name);
+  void init();
 };
