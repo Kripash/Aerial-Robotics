@@ -4,5 +4,9 @@
   <arg name="camera_frame" default="world"/>
   <arg name="image_topic" default="image_raw"/>
   <arg name="cam_info_topic" default="camera_info"/>
-  <node name="detector" pkg="apriltag_detect" type="detector" output="screen"/>
+
+  <node name="detector" pkg="apriltag_detect" type="detector" output="screen">
+    <remap from="image_rect" to="$(arg camera_name)/$(arg image_topic)" />
+    <remap from="camera_info" to="$(arg camera_name)/$(arg cam_info_topic)" />
+  </node>
 </launch>
