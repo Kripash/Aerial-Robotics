@@ -18,8 +18,11 @@ private:
   apriltag_family_t *tf_;
   ros::NodeHandle nh_;
   ros::Subscriber sub_;
+  zarray_t *detected_tags_;
 
   void detectTag(const sensor_msgs::ImageConstPtr& image);
+  static int idComparison(const void* first, const void* second);
+  void removeDuplicates();
 
 public:
   TagDetector();

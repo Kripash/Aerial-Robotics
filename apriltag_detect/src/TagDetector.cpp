@@ -3,7 +3,8 @@
 TagDetector::TagDetector():
   td_{apriltag_detector_create()},
   tf_{tag16h5_create()},
-  nh_{}
+  nh_{},
+  detected_tags_{nullptr}
 {
   apriltag_detector_add_family(td_, tf_);
   init();
@@ -19,7 +20,6 @@ void TagDetector::init(){
 }
 
 void TagDetector::detectTag(const sensor_msgs::ImageConstPtr& image){
-  zarray_t *detections = nullptr;
   cv_bridge::CvImagePtr cv_ptr;
   try {
     cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::MONO8);
@@ -36,12 +36,56 @@ void TagDetector::detectTag(const sensor_msgs::ImageConstPtr& image){
     .buf = gray_image.data
   };
 
-  detections = apriltag_detector_detect(td_, &apriltag_image);
+  detected_tags_ = apriltag_detector_detect(td_, &apriltag_image);
   // for (int i = 0; i < zarray_size(detections); i++) {
   //   apriltag_detection_t *det;
   //   zarray_get(detections, i, &det);
   //
   //   ROS_INFO_STREAM("FOUND! " << i);
   // }
-  ROS_INFO_STREAM("FOUND! " << zarray_size(detections));
+  removeDuplicates();
+  ROS_INFO_STREAM("FOUND! " << zarray_size(detected_tags_));
+  for (int i = 0; i < zarray_size(detected_tags_); i++) {
+    apriltag_detection_t *det;
+    zarray_get(detected_tags_, i, &det);
+
+    ROS_INFO_STREAM("ID: " << det->id);
+  }
+}
+
+int TagDetector::idComparison(const void* first, const void* second)
+{
+  int id1 = ((apriltag_detection_t*) first)->id;
+  int id2 = ((apriltag_detection_t*) second)->id;
+  return (id1 < id2) ? -1 : ((id1 == id2) ? 0 : 1);
+}
+
+void TagDetector::removeDuplicates(){
+  zarray_sort(detected_tags_, &idComparison);
+  int count = 0;
+  bool duplicate_detected = false;
+  while(true){
+    if (count > zarray_size(detected_tags_)-1){
+      return;
+    }
+    apriltag_detection_t *detected_tag;
+    zarray_get(detected_tags_, count, &detected_tag);
+    int id_current = detected_tag->id;
+    int id_next = -1;
+    if (count < zarray_size(detected_tags_)-1){
+      zarray_get(detected_tags_, count+1, &detected_tag);
+      id_next = detected_tag->id;
+    }
+    if (id_current == id_next || (id_current != id_next && duplicate_detected)){
+      duplicate_detected = true;
+      int shuffle = 0;
+      zarray_remove_index(detected_tags_, count, shuffle);
+      if (id_current != id_next){
+        duplicate_detected = false;
+      }
+      continue;
+    } else {
+      ++count;
+    }
+  }
 }
