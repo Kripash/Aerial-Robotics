@@ -27,6 +27,8 @@ void TagDetector::detectTag(
   const sensor_msgs::CameraInfoConstPtr& camera_info)
 {
   cv_bridge::CvImagePtr cv_ptr;
+  tf::Transform transform;
+  tf::Quaternion q;
   try {
     cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::MONO8);
   } catch (cv_bridge::Exception& e) {
@@ -69,7 +71,19 @@ void TagDetector::detectTag(
       info.cx = cx;
       info.cy = cy;
       double err = estimate_tag_pose(&info, &pose);
-      // TODO: do something with pose.
+
+      transform.setOrigin(tf::Vector3(
+        matd_get_scalar(&pose.t[0]),
+        matd_get_scalar(&pose.t[1]),
+        matd_get_scalar(&pose.t[2])
+      ));
+      q.setRPY(
+        matd_get_scalar(&pose.R[0]),
+        matd_get_scalar(&pose.R[1]),
+        matd_get_scalar(&pose.R[2])
+      );
+      transform.setRotation(q);
+      br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "tag_4"));
     }
   }
 }

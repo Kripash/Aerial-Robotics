@@ -12,6 +12,7 @@
 #include "image_geometry/pinhole_camera_model.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <tf/transform_broadcaster.h>
 
 using std::string;
 
@@ -21,6 +22,7 @@ private:
   apriltag_family_t *tf_;
   ros::NodeHandle nh_;
   ros::Subscriber sub_;
+  tf::TransformBroadcaster br_;
   image_transport::ImageTransport it_;
   image_transport::CameraSubscriber camera_image_subscriber_;
   zarray_t *detected_tags_;
