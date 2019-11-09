@@ -15,6 +15,15 @@ TagDetector::TagDetector(int argc, char** argv):
   node_ -> getParam("pose_topic", pose_topic_);
   node_ -> getParam("landing_pad_frame", landing_pad_frame_);
 
+  tf::TransformListener listener;
+  try{
+    listener.waitForTransform(landing_pad_frame_, parent_frame_, ros::Time::now(), ros::Duration(1.0));
+    listener.lookupTransform(landing_pad_frame_, parent_frame_, ros::Time::now(), transform_);
+  }
+  catch (tf::TransformException ex){
+    ROS_ERROR("%s",ex.what());
+  }
+
   if (tag_family_ == "tag36h11")
   {
     tf_ = tag36h11_create();
@@ -128,9 +137,9 @@ void TagDetector::detectTag(
       geometry_msgs::PoseStamped P;
       P.header.frame_id = landing_pad_frame_;
       P.header.stamp = ros::Time::now();
-      P.pose.position.x = matd_get_scalar(&pose.t[0]);
-      P.pose.position.y = matd_get_scalar(&pose.t[1]);
-      P.pose.position.z = matd_get_scalar(&pose.t[2]);
+      P.pose.position.x = matd_get_scalar(&pose.t[0]) + transform_.getOrigin().x();
+      P.pose.position.y = matd_get_scalar(&pose.t[1]) + transform_.getOrigin().y();
+      P.pose.position.z = matd_get_scalar(&pose.t[2]) + + transform_.getOrigin().z();
 
       pose_publisher_.publish(P);
    
