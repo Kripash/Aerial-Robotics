@@ -62,12 +62,6 @@ add_library(${PROJECT_NAME}_tag_detector
   ${catkin_LIBRARIES}
 )
 
-
-
-add_executable(demo src/opencv_demo.cc)
-target_link_libraries(demo ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
-add_dependencies(demo ${catkin_EXPORTED_TARGETS})
-
 add_executable(detector src/tag_detection_node.cpp)
 target_link_libraries(detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 add_dependencies(detector ${PROJECT_NAME}_tag_detector ${catkin_EXPORTED_TARGETS})

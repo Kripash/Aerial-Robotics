@@ -103,6 +103,7 @@ void TagDetector::detectTag(
       // ROS_INFO_STREAM("FOUND!");
       apriltag_detection_info_t info;
       apriltag_pose_t pose;
+
       info.det = det;
       info.tagsize = tag_size_;
       info.fx = fx;
