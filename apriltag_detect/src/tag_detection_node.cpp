@@ -7,8 +7,8 @@
 #include "../include/TagDetector.h"
 
 int main(int argc, char **argv){
-  ros::init(argc, argv, "detect");
-  TagDetector tag_detector{};
+  ros::init(argc, argv, "detector");
+  TagDetector tag_detector(argc, argv);
   ros::spin();
   return 0;
 }

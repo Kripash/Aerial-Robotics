@@ -1,25 +1,64 @@
 #include "../include/TagDetector.h"
 
-TagDetector::TagDetector():
+TagDetector::TagDetector(int argc, char** argv):
   td_{apriltag_detector_create()},
-  tf_{tag16h5_create()},
   nh_{},
   it_{nh_},
   detected_tags_{nullptr}
 {
+  node_ = new ros::NodeHandle("~");
+  node_ -> getParam("tag_size", tag_size_);
+  node_ -> getParam("parent_frame", parent_frame_);
+  node_ -> getParam("child_frame", child_frame_);
+  node_ -> getParam("family", tag_family_);
+  node_ -> getParam("tag_id", tag_id_);
+  node_ -> getParam("pose_topic", pose_topic_);
+  node_ -> getParam("landing_pad_frame", landing_pad_frame_);
+
+  if (tag_family_ == "tag36h11")
+  {
+    tf_ = tag36h11_create();
+  }
+  else if (tag_family_ == "tag25h9")
+  {
+    tf_ = tag25h9_create();
+  }
+  else if (tag_family_ == "tag16h5")
+  {
+    tf_ = tag16h5_create();
+  }
+  else if (tag_family_ == "tagCustom48h12")
+  {
+    tf_ = tagCustom48h12_create();
+  }
+  else if (tag_family_ == "tagStandard52h13")
+  {
+    tf_ = tagStandard52h13_create();
+  }  
+  else if (tag_family_ == "tagStandard41h12")
+  {
+    tf_ = tagStandard41h12_create();
+  }
+  else
+  {
+    ROS_WARN("Invalid tag family specified! Aborting");
+    exit(1);
+  }  
   init();
 }
 
 TagDetector::~TagDetector(){
   tag16h5_destroy(tf_);
   apriltag_detector_destroy(td_);
+  delete node_;
+  node_ = nullptr;
 }
 
 void TagDetector::init(){
   apriltag_detector_add_family(td_, tf_);
   camera_image_subscriber_ = it_.subscribeCamera(
     "image_rect", 1, &TagDetector::detectTag, this);
-  // sub_ = nh_.subscribe("ptgrey_node/cam",1, &TagDetector::detectTag, this);
+  pose_publisher_ = node_ -> advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
 }
 
 void TagDetector::detectTag(
@@ -60,12 +99,12 @@ void TagDetector::detectTag(
   for (int i = 0; i < zarray_size(detected_tags_); i++) {
     apriltag_detection_t *det;
     zarray_get(detected_tags_, i, &det);
-    if (det->id == 4){
+    if (det->id == tag_id_){
       // ROS_INFO_STREAM("FOUND!");
       apriltag_detection_info_t info;
       apriltag_pose_t pose;
       info.det = det;
-      info.tagsize = 0.2286;
+      info.tagsize = tag_size_;
       info.fx = fx;
       info.fy = fy;
       info.cx = cx;
@@ -83,7 +122,17 @@ void TagDetector::detectTag(
         matd_get_scalar(&pose.R[2])
       );
       transform.setRotation(q);
-      br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "tag_4"));
+      br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), parent_frame_, child_frame_));
+        
+      geometry_msgs::PoseStamped P;
+      P.header.frame_id = landing_pad_frame_;
+      P.header.stamp = ros::Time::now();
+      P.pose.position.x = matd_get_scalar(&pose.t[0]);
+      P.pose.position.y = matd_get_scalar(&pose.t[1]);
+      P.pose.position.z = matd_get_scalar(&pose.t[2]);
+
+      pose_publisher_.publish(P);
+   
     }
   }
 }
