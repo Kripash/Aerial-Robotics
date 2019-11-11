@@ -1,4 +1,4 @@
-#include "../include/TagDetector.h"
+#include "apriltag_detect/TagDetector.h"
 
 TagDetector::TagDetector(int argc, char** argv):
   td_{apriltag_detector_create()},
