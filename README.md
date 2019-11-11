@@ -39,6 +39,12 @@ If you do not have `catkin tools` please install from this website:
    ```shell
    catkin build
    ```
+   
+   Note, you can still build the package using: 
+   ``` 
+   catkin_make
+   ```
+   However, keep in mind that a workspace must follow either catkin build tools or catkin_make.
 
 5. Source your catkin workspace.
 
