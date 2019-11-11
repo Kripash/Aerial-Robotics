@@ -1,19 +1,18 @@
-#include "apriltag_detect/TagDetector.h"
+#include "../include/TagDetector.h"
 
 TagDetector::TagDetector(int argc, char** argv):
   td_{apriltag_detector_create()},
-  nh_{},
-  it_{nh_},
+  nh_{new ros::NodeHandle{"~"}},
+  it_{ros::NodeHandle{}}, //needs nodehandle for itself (it uses std::move).
   detected_tags_{nullptr}
 {
-  node_ = new ros::NodeHandle("~");
-  node_ -> getParam("tag_size", tag_size_);
-  node_ -> getParam("parent_frame", parent_frame_);
-  node_ -> getParam("child_frame", child_frame_);
-  node_ -> getParam("family", tag_family_);
-  node_ -> getParam("tag_id", tag_id_);
-  node_ -> getParam("pose_topic", pose_topic_);
-  node_ -> getParam("landing_pad_frame", landing_pad_frame_);
+  nh_->getParam("tag_size", tag_size_);
+  nh_->getParam("parent_frame", parent_frame_);
+  nh_->getParam("child_frame", child_frame_);
+  nh_->getParam("family", tag_family_);
+  nh_->getParam("tag_id", tag_id_);
+  nh_->getParam("pose_topic", pose_topic_);
+  nh_->getParam("landing_pad_frame", landing_pad_frame_);
 
   tf::TransformListener listener;
   try{
@@ -59,15 +58,14 @@ TagDetector::TagDetector(int argc, char** argv):
 TagDetector::~TagDetector(){
   tag16h5_destroy(tf_);
   apriltag_detector_destroy(td_);
-  delete node_;
-  node_ = nullptr;
+  nh_.reset();
 }
 
 void TagDetector::init(){
   apriltag_detector_add_family(td_, tf_);
   camera_image_subscriber_ = it_.subscribeCamera(
     "image_rect", 1, &TagDetector::detectTag, this);
-  pose_publisher_ = node_ -> advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
+  pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
 }
 
 void TagDetector::detectTag(
@@ -139,7 +137,7 @@ void TagDetector::detectTag(
       P.header.stamp = ros::Time::now();
       P.pose.position.x = matd_get_scalar(&pose.t[0]) + transform_.getOrigin().x();
       P.pose.position.y = matd_get_scalar(&pose.t[1]) + transform_.getOrigin().y();
-      P.pose.position.z = matd_get_scalar(&pose.t[2]) + transform_.getOrigin().z();
+      P.pose.position.z = matd_get_scalar(&pose.t[2]) + + transform_.getOrigin().z();
 
       pose_publisher_.publish(P);
 

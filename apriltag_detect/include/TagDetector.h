@@ -28,7 +28,7 @@ class TagDetector{
 private:
   apriltag_detector_t *td_;
   apriltag_family_t *tf_;
-  ros::NodeHandle nh_;
+  std::unique_ptr<ros::NodeHandle> nh_;
   ros::Subscriber sub_;
   ros::Publisher pose_publisher_;
   tf::TransformBroadcaster br_;
@@ -37,7 +37,6 @@ private:
   image_transport::CameraSubscriber camera_image_subscriber_;
   zarray_t *detected_tags_;
 
-  ros::NodeHandle * node_;
   double tag_size_;
   int tag_id_;
   std::string parent_frame_;

@@ -4,10 +4,10 @@
 #include <ros/console.h>
 #include <sensor_msgs/Image.h>
 
-#include "apriltag_detect/TagDetector.h"
+#include "../include/TagDetector.h"
 
 int main(int argc, char **argv){
-  ros::init(argc, argv, "tag_detector");
+  ros::init(argc, argv, "detector");
   TagDetector tag_detector(argc, argv);
   ros::spin();
   return 0;

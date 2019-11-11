@@ -59,9 +59,9 @@ include_directories(
 add_library(${PROJECT_NAME}_tag_detector src/TagDetector.cpp)
 target_link_libraries(${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES})
 
-add_executable(tag_detector src/tag_detection_node.cpp)
-add_dependencies(tag_detector ${PROJECT_NAME}_tag_detector)
-target_link_libraries(tag_detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+add_executable(detector src/tag_detection_node.cpp)
+add_dependencies(detector ${PROJECT_NAME}_tag_detector)
+target_link_libraries(detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 
 
 
@@ -154,12 +154,7 @@ target_link_libraries(tag_detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARI
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES apriltag_detect
-#  CATKIN_DEPENDS roscpp rospy sensor_msgs
-#  DEPENDS system_lib
-)
+
 
 ###########
 ## Build ##

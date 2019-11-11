@@ -112,6 +112,8 @@ Visualization Manager:
           Value: true
         landing_pad:
           Value: true
+        tag4:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -120,6 +122,8 @@ Visualization Manager:
       Tree:
         camera:
           landing_pad:
+            {}
+          tag4:
             {}
       Update Interval: 0
       Value: true
@@ -135,7 +139,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Axes
-      Topic: /tag_detector/pose
+      Topic: /detector/pose
       Unreliable: false
       Value: true
   Enabled: true
