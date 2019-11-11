@@ -8,7 +8,7 @@
 
   <node pkg="tf" type="static_transform_publisher" name="landing_pad_tf" args="1 1 0 0 0 0 $(arg camera_frame) $(arg landing_pad_frame) 100"/>
 
-  <node name="detector" pkg="apriltag_detect" type="detector" output="screen">
+  <node name="tag_detector" pkg="apriltag_detect" type="tag_detector" output="screen">
     <param name="tag_size"          value="0.2286" />
     <param name="parent_frame"      value="$(arg camera_frame)" />
     <param name="child_frame"       value="tag4" />

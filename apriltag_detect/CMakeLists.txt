@@ -18,7 +18,6 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   geometry_msgs
-  #apriltag_ros
   cv_bridge
   image_geometry
   image_transport
@@ -38,7 +37,6 @@ catkin_package(
    cv_bridge
    geometry_msgs
    image_transport
-   #message_runtime
    roscpp
    sensor_msgs
    std_msgs
@@ -47,24 +45,23 @@ catkin_package(
    OpenCV
    apriltag
  LIBRARIES
- ${PROJECT_NAME}_tag_detector
+  ${PROJECT_NAME}_tag_detector
 )
 
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${apriltag_INCLUDE_DIRS}
 )
 
 
-add_library(${PROJECT_NAME}_tag_detector
-  src/TagDetector.cpp
-  ${catkin_LIBRARIES}
-)
+add_library(${PROJECT_NAME}_tag_detector src/TagDetector.cpp)
+target_link_libraries(${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES})
 
-add_executable(detector src/tag_detection_node.cpp)
-target_link_libraries(detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
-add_dependencies(detector ${PROJECT_NAME}_tag_detector ${catkin_EXPORTED_TARGETS})
+add_executable(tag_detector src/tag_detection_node.cpp)
+add_dependencies(tag_detector ${PROJECT_NAME}_tag_detector)
+target_link_libraries(tag_detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 
 
 

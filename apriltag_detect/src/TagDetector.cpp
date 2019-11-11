@@ -1,4 +1,4 @@
-#include "../include/TagDetector.h"
+#include "apriltag_detect/TagDetector.h"
 
 TagDetector::TagDetector(int argc, char** argv):
   td_{apriltag_detector_create()},
@@ -43,7 +43,7 @@ TagDetector::TagDetector(int argc, char** argv):
   else if (tag_family_ == "tagStandard52h13")
   {
     tf_ = tagStandard52h13_create();
-  }  
+  }
   else if (tag_family_ == "tagStandard41h12")
   {
     tf_ = tagStandard41h12_create();
@@ -52,7 +52,7 @@ TagDetector::TagDetector(int argc, char** argv):
   {
     ROS_WARN("Invalid tag family specified! Aborting");
     exit(1);
-  }  
+  }
   init();
 }
 
@@ -133,16 +133,16 @@ void TagDetector::detectTag(
       );
       transform.setRotation(q);
       br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), parent_frame_, child_frame_));
-        
+
       geometry_msgs::PoseStamped P;
       P.header.frame_id = landing_pad_frame_;
       P.header.stamp = ros::Time::now();
       P.pose.position.x = matd_get_scalar(&pose.t[0]) + transform_.getOrigin().x();
       P.pose.position.y = matd_get_scalar(&pose.t[1]) + transform_.getOrigin().y();
-      P.pose.position.z = matd_get_scalar(&pose.t[2]) + + transform_.getOrigin().z();
+      P.pose.position.z = matd_get_scalar(&pose.t[2]) + transform_.getOrigin().z();
 
       pose_publisher_.publish(P);
-   
+
     }
   }
 }
