@@ -1,6 +1,13 @@
 # Aerial-Robotics
 Landing of a UAV on a UGV.
 
+##AprilTag 
+This project uses AprilTags, which is a visual fiducial system research project from the APRIL Robotics Laboratory at the University of Michigan. The package can be retrieved from: 
+
+​  https://github.com/AprilRobotics/apriltag
+
+
+
 ## How to get it to work
 
 ### Installs
