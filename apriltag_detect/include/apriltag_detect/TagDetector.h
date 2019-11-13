@@ -28,14 +28,12 @@ class TagDetector{
 private:
   apriltag_detector_t *td_;
   apriltag_family_t *tf_;
-  int init_argc_;
-  char** init_argv_;
   std::unique_ptr<ros::NodeHandle> nh_;
   ros::Subscriber sub_;
   ros::Publisher pose_publisher_;
   tf::TransformBroadcaster br_;
   tf::StampedTransform transform_;
-  std::unique_ptr<image_transport::ImageTransport> it_;
+  image_transport::ImageTransport it_;
   image_transport::CameraSubscriber camera_image_subscriber_;
   zarray_t *detected_tags_;
 

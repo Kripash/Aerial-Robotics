@@ -1,23 +1,11 @@
 #include "apriltag_detect/TagDetector.h"
 
 TagDetector::TagDetector(int argc, char** argv):
-  init_argc_{argc},
-  init_argv_{argv},
   td_{apriltag_detector_create()},
-  detected_tags_{nullptr}{}
-
-TagDetector::~TagDetector(){
-  tag16h5_destroy(tf_);
-  apriltag_detector_destroy(td_);
-  nh_.reset();
-}
-
-void TagDetector::init(){
-  ros::init(init_argc_, init_argv_, "detector");
-
-  // nh_ = std::make_unique<ros::NodeHandle>("~");
-  // it_ = std::make_unique<image_transport::ImageTransport>(ros::NodeHandle{});
-
+  nh_{new ros::NodeHandle{"~"}},
+  it_{ros::NodeHandle{}}, //needs nodehandle for itself (it uses std::move).
+  detected_tags_{nullptr}
+{
   nh_->getParam("tag_size", tag_size_);
   nh_->getParam("parent_frame", parent_frame_);
   nh_->getParam("child_frame", child_frame_);
@@ -64,8 +52,18 @@ void TagDetector::init(){
     ROS_WARN("Invalid tag family specified! Aborting");
     exit(1);
   }
+  init();
+}
+
+TagDetector::~TagDetector(){
+  tag16h5_destroy(tf_);
+  apriltag_detector_destroy(td_);
+  nh_.reset();
+}
+
+void TagDetector::init(){
   apriltag_detector_add_family(td_, tf_);
-  camera_image_subscriber_ = it_->subscribeCamera(
+  camera_image_subscriber_ = it_.subscribeCamera(
     "image_rect", 1, &TagDetector::detectTag, this);
   pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
 }
