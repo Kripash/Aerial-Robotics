@@ -1,6 +1,13 @@
 # Aerial-Robotics
 Landing of a UAV on a UGV.
 
+## AprilTag 
+This project uses and depends on AprilTags, which is a visual fiducial system research project from the APRIL Robotics Laboratory at the University of Michigan. The package can be retrieved from: 
+
+​  https://github.com/AprilRobotics/apriltag
+
+
+
 ## How to get it to work
 
 ### Installs
@@ -39,6 +46,12 @@ If you do not have `catkin tools` please install from this website:
    ```shell
    catkin build
    ```
+   
+   Note, you can still build the package using: 
+   ``` 
+   catkin_make
+   ```
+   However, keep in mind that a workspace must follow either catkin build tools or catkin_make.
 
 5. Source your catkin workspace.
 
