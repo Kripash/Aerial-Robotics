@@ -7,8 +7,8 @@
 #include "apriltag_detect/TagDetector.h"
 
 int main(int argc, char **argv){
-  ros::init(argc, argv, "detector");
   TagDetector tag_detector(argc, argv);
+  tag_detector.init();
   ros::spin();
   return 0;
 }
