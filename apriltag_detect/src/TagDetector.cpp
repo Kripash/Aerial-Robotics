@@ -1,18 +1,19 @@
 #include "apriltag_detect/TagDetector.h"
 
-TagDetector::TagDetector(int argc, char** argv):
+TagDetector::TagDetector():
   td_{apriltag_detector_create()},
-  nh_{new ros::NodeHandle{"~"}},
-  it_{ros::NodeHandle{}}, //needs nodehandle for itself (it uses std::move).
+  nh_{"~"},
+  it_{nh_},
   detected_tags_{nullptr}
 {
-  nh_->getParam("tag_size", tag_size_);
-  nh_->getParam("parent_frame", parent_frame_);
-  nh_->getParam("child_frame", child_frame_);
-  nh_->getParam("family", tag_family_);
-  nh_->getParam("tag_id", tag_id_);
-  nh_->getParam("pose_topic", pose_topic_);
-  nh_->getParam("landing_pad_frame", landing_pad_frame_);
+  nh_.getParam("name", private_node_name_);
+  nh_.getParam("tag_size", tag_size_);
+  nh_.getParam("parent_frame", parent_frame_);
+  nh_.getParam("child_frame", child_frame_);
+  nh_.getParam("family", tag_family_);
+  nh_.getParam("tag_id", tag_id_);
+  nh_.getParam("pose_topic", pose_topic_);
+  nh_.getParam("landing_pad_frame", landing_pad_frame_);
 
   tf::TransformListener listener;
   try{
@@ -23,49 +24,16 @@ TagDetector::TagDetector(int argc, char** argv):
     ROS_ERROR("%s",ex.what());
   }
 
-  if (tag_family_ == "tag36h11")
-  {
-    tf_ = tag36h11_create();
-  }
-  else if (tag_family_ == "tag25h9")
-  {
-    tf_ = tag25h9_create();
-  }
-  else if (tag_family_ == "tag16h5")
-  {
-    tf_ = tag16h5_create();
-  }
-  else if (tag_family_ == "tagCustom48h12")
-  {
-    tf_ = tagCustom48h12_create();
-  }
-  else if (tag_family_ == "tagStandard52h13")
-  {
-    tf_ = tagStandard52h13_create();
-  }
-  else if (tag_family_ == "tagStandard41h12")
-  {
-    tf_ = tagStandard41h12_create();
-  }
-  else
-  {
-    ROS_WARN("Invalid tag family specified! Aborting");
-    exit(1);
-  }
-  init();
+  tf_ = tag16h5_create();
+  apriltag_detector_add_family(td_, tf_);
+  camera_image_subscriber_ = it_.subscribeCamera(
+    private_node_name_ + "/image_rect", 1, &TagDetector::detectTag, this);
+  pose_publisher_ = nh_.advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
 }
 
 TagDetector::~TagDetector(){
   tag16h5_destroy(tf_);
   apriltag_detector_destroy(td_);
-  nh_.reset();
-}
-
-void TagDetector::init(){
-  apriltag_detector_add_family(td_, tf_);
-  camera_image_subscriber_ = it_.subscribeCamera(
-    "image_rect", 1, &TagDetector::detectTag, this);
-  pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
 }
 
 void TagDetector::detectTag(
@@ -106,13 +74,12 @@ void TagDetector::detectTag(
   for (int i = 0; i < zarray_size(detected_tags_); i++) {
     apriltag_detection_t *det;
     zarray_get(detected_tags_, i, &det);
-    if (det->id == tag_id_){
+    if (det->id == 4){
       // ROS_INFO_STREAM("FOUND!");
       apriltag_detection_info_t info;
       apriltag_pose_t pose;
-
       info.det = det;
-      info.tagsize = tag_size_;
+      info.tagsize = 0.2286;
       info.fx = fx;
       info.fy = fy;
       info.cx = cx;
@@ -140,7 +107,6 @@ void TagDetector::detectTag(
       P.pose.position.z = matd_get_scalar(&pose.t[2]) + + transform_.getOrigin().z();
 
       pose_publisher_.publish(P);
-
     }
   }
 }
