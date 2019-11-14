@@ -4,6 +4,11 @@
 #include <apriltag.h>
 #include <apriltag_pose.h>
 #include <tag16h5.h>
+#include <tagStandard52h13.h>
+#include <tagStandard41h12.h>
+#include <tag36h11.h>
+#include <tag25h9.h>
+#include <tagCustom48h12.h>
 #include <ros/console.h>
 #include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
@@ -30,12 +35,19 @@ private:
   image_transport::CameraSubscriber camera_image_subscriber_;
   zarray_t *detected_tags_;
 
-  double tag_size_;
+
+  string tag_family_;
   int tag_id_;
+  double tag_size_;
+  int tag_threads_;
+  double tag_decimate_;
+  double tag_blur_;
+  bool tag_refine_edges_;
+  bool tag_debug_;
+
   string private_node_name_;
   string parent_frame_;
   string child_frame_;
-  string tag_family_;
   string pose_topic_;
   string landing_pad_frame_;
 
