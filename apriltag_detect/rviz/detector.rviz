@@ -114,8 +114,6 @@ Visualization Manager:
           Value: true
         tag4:
           Value: true
-        tag4_body_frame:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -126,8 +124,6 @@ Visualization Manager:
           landing_pad:
             {}
           tag4:
-            {}
-          tag4_body_frame:
             {}
       Update Interval: 0
       Value: true

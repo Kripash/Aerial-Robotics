@@ -12,14 +12,14 @@
     <param name="tag_size"          value="0.2286" />
     <param name="parent_frame"      value="$(arg camera_frame)" />
     <param name="child_frame"       value="tag4" />
-    <!--param name="family"            value="tagStandard41h12" /-->
-    <param name="family"            value="tag16h5" />
+    <param name="family"            value="tagStandard41h12" />
+    <!--param name="family"            value="tag16h5" /-->
     <param name="tag_threads"       value="2" />
     <param name="tag_decimate"      value="1.0" />
     <param name="tag_blur"          value="1.0" />
     <param name="debug"             value="0" />
     <param name="refine_edges"      value="0" />
-    <param name="tag_id"            value="4" />
+    <param name="tag_id"            value="10" />
     <param name="pose_topic"        value="pose" />
     <param name="landing_pad_frame" value="$(arg landing_pad_frame)"/>
     <remap from="image_rect"        to="$(arg camera_name)/$(arg image_topic)" />
