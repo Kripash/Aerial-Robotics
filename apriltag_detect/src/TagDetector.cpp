@@ -73,7 +73,30 @@ TagDetector::TagDetector():
 }
 
 TagDetector::~TagDetector(){
-  tag16h5_destroy(tf_);
+  if (tag_family_ == "tag36h11")
+  {
+    tag36h11_destroy(tf_);
+  }
+  else if (tag_family_ == "tag25h9")
+  {
+    tag25h9_destroy(tf_);
+  }
+  else if (tag_family_ == "tag16h5")
+  {
+    tag16h5_destroy(tf_);
+  }
+  else if (tag_family_ == "tagCustom48h12")
+  {
+    tagCustom48h12_destroy(tf_);
+  }
+  else if (tag_family_ == "tagStandard52h13")
+  {
+    tagStandard52h13_destroy(tf_);
+  }
+  else if (tag_family_ == "tagStandard41h12")
+  {
+    tagStandard41h12_destroy(tf_);
+  }
   apriltag_detector_destroy(td_);
 }
 
