@@ -13,6 +13,18 @@ TagDetector::TagDetector(int argc, char** argv):
   nh_->getParam("tag_id", tag_id_);
   nh_->getParam("pose_topic", pose_topic_);
   nh_->getParam("landing_pad_frame", landing_pad_frame_);
+  nh_->getParam("tag_threads", tag_threads_);
+  nh_->getParam("tag_decimate", tag_decimate_);
+  nh_->getParam("tag_blur", tag_blur_);
+  nh_->getParam("debug", tag_debug_);
+  nh_->getParam("refine_edges", tag_refine_edges_);
+
+
+  td_->quad_decimate = static_cast<float>(tag_decimate_);
+  td_->quad_sigma = static_cast<float>(tag_blur_);
+  td_->nthreads = tag_threads_;
+  td_->debug = tag_debug_;
+  td_->refine_edges = tag_refine_edges_;
 
   tf::TransformListener listener;
   try{
@@ -49,7 +61,7 @@ TagDetector::TagDetector(int argc, char** argv):
   }
   else
   {
-    ROS_WARN("Invalid tag family specified! Aborting");
+    ROS_WARN("Invalid tag family! Exiting!");
     exit(1);
   }
   init();
@@ -66,6 +78,7 @@ void TagDetector::init(){
   camera_image_subscriber_ = it_.subscribeCamera(
     "image_rect", 1, &TagDetector::detectTag, this);
   pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
+  est_pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>( std::string("estimated_") + landing_pad_frame_, 100);
 }
 
 void TagDetector::detectTag(
@@ -119,28 +132,46 @@ void TagDetector::detectTag(
       info.cy = cy;
       double err = estimate_tag_pose(&info, &pose);
 
-      transform.setOrigin(tf::Vector3(
-        matd_get_scalar(&pose.t[0]),
-        matd_get_scalar(&pose.t[1]),
-        matd_get_scalar(&pose.t[2])
-      ));
-      q.setRPY(
-        matd_get_scalar(&pose.R[0]),
-        matd_get_scalar(&pose.R[1]),
-        matd_get_scalar(&pose.R[2])
-      );
-      transform.setRotation(q);
-      br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), parent_frame_, child_frame_));
+      #ifdef ERROR_THRESHOLD
+      if(err < ERROR_THRESHOLD)
+      #endif
+      {
+        transform.setOrigin(tf::Vector3(
+          matd_get_scalar(&pose.t[0]),
+          matd_get_scalar(&pose.t[1]),
+          matd_get_scalar(&pose.t[2])
+        ));
+        
+        q.setRPY(
+          matd_get_scalar(&pose.R[0]),
+          matd_get_scalar(&pose.R[1]),
+          matd_get_scalar(&pose.R[2])
+        );
+        transform.setRotation(q);
+        br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), parent_frame_, child_frame_));
 
-      geometry_msgs::PoseStamped P;
-      P.header.frame_id = landing_pad_frame_;
-      P.header.stamp = ros::Time::now();
-      P.pose.position.x = matd_get_scalar(&pose.t[0]) + transform_.getOrigin().x();
-      P.pose.position.y = matd_get_scalar(&pose.t[1]) + transform_.getOrigin().y();
-      P.pose.position.z = matd_get_scalar(&pose.t[2]) + + transform_.getOrigin().z();
+        q.setRPY(0 ,0 ,0);
+        transform.setRotation(q);
+        br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), parent_frame_, child_frame_ + std::string("_body_frame")));
+       
+        geometry_msgs::PoseStamped P;
+        P.header.frame_id = landing_pad_frame_;
+        P.header.stamp = ros::Time::now();
+        P.pose.position.x = matd_get_scalar(&pose.t[0]) + transform_.getOrigin().x();
+        P.pose.position.y = matd_get_scalar(&pose.t[1]) + transform_.getOrigin().y();
+        P.pose.position.z = matd_get_scalar(&pose.t[2]) + transform_.getOrigin().z();
 
-      pose_publisher_.publish(P);
+        pose_publisher_.publish(P);
 
+        geometry_msgs::PoseStamped est_p;
+        est_p.header.frame_id = child_frame_ + std::string("_body_frame");
+        est_p.header.stamp = ros::Time::now();
+        est_p.pose.position.x = (matd_get_scalar(&pose.t[0]) * -1) - transform_.getOrigin().x();
+        est_p.pose.position.y = (matd_get_scalar(&pose.t[1]) * -1) - transform_.getOrigin().y();
+        est_p.pose.position.z = (matd_get_scalar(&pose.t[2]) * -1) - transform_.getOrigin().z();
+
+        est_pose_publisher_.publish(est_p);
+      }
     }
   }
 }

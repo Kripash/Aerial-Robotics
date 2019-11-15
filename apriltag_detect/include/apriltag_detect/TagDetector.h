@@ -22,6 +22,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
 
+#define ERROR_THRESHOLD 0.001
+
 using std::string;
 
 class TagDetector{
@@ -31,20 +33,26 @@ private:
   std::unique_ptr<ros::NodeHandle> nh_;
   ros::Subscriber sub_;
   ros::Publisher pose_publisher_;
+  ros::Publisher est_pose_publisher_;
   tf::TransformBroadcaster br_;
   tf::StampedTransform transform_;
   image_transport::ImageTransport it_;
   image_transport::CameraSubscriber camera_image_subscriber_;
   zarray_t *detected_tags_;
 
-  double tag_size_;
-  int tag_id_;
   std::string parent_frame_;
   std::string child_frame_;
   std::string tag_family_;
   std::string pose_topic_;
   std::string landing_pad_frame_;
 
+  int tag_id_;
+  int tag_threads_;
+  double tag_size_;
+  double tag_decimate_;
+  double tag_blur_;
+  int tag_refine_edges_;
+  int tag_debug_;
 
   void detectTag(
     const sensor_msgs::ImageConstPtr& image,
