@@ -187,7 +187,7 @@ void TagDetector::detectTag(
       points.point4_x = static_cast<int>(det->p[3][0]);
       points.point4_y = static_cast<int>(det->p[3][1]);
 
-      //points_publisher_.publish(points);
+      points_publisher_.publish(points);
 
       transform.setOrigin(tf::Vector3(
         matd_get_scalar(&pose.t[0]),
