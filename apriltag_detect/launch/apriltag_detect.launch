@@ -9,10 +9,11 @@
   <node pkg="tf" type="static_transform_publisher" name="landing_pad_tf" args="0 0 0 0 0 0 $(arg camera_frame) $(arg landing_pad_frame) 100"/>
 
   <node name="detector" pkg="apriltag_detect" type="detector" output="screen">
-    <param name="parent_frame"      value="$(arg camera_frame)" />
-    <param name="child_frame"       value="tag" />
-    <param name="pose_topic"        value="pose" />
-    <param name="landing_pad_frame" value="$(arg landing_pad_frame)"/>
+    <param name="parent_frame"      value="$(arg camera_frame)" type="str"/>
+    <param name="child_frame"       value="tag" type="str"/>
+    <param name="pose_topic"        value="pose" type="str"/>
+    <param name="error_topic"       value="error" type="str"/>
+    <param name="landing_pad_frame" value="$(arg landing_pad_frame)" type="str"/>
 
     <rosparam command="load" file="$(find apriltag_detect)/config/settings.yaml" />
 

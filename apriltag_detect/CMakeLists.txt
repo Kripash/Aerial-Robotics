@@ -27,6 +27,7 @@ link_directories(${apriltag_LIBDIR})
 add_message_files(
   FILES
   graphing.msg
+  error.msg
 )
 
 generate_messages(
@@ -68,5 +69,5 @@ add_library(${PROJECT_NAME}_tag_detector src/TagDetector.cpp)
 target_link_libraries(${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES})
 
 add_executable(detector src/tag_detection_node.cpp)
-add_dependencies(detector ${PROJECT_NAME}_tag_detector)
+add_dependencies(detector ${PROJECT_NAME}_tag_detector ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(detector ${PROJECT_NAME}_tag_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
