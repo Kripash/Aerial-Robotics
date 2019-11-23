@@ -21,6 +21,7 @@
 #include <tf/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
+#include <apriltag_detect/graphing.h>
 
 #define ERROR_THRESHOLD 0.001
 
