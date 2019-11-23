@@ -6,7 +6,7 @@
   <arg name="cam_info_topic" default="camera_info"/>
   <arg name="landing_pad_frame" default="landing_pad"/>
 
-  <node pkg="tf" type="static_transform_publisher" name="landing_pad_tf" args="1 1 0 0 0 0 $(arg camera_frame) $(arg landing_pad_frame) 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="landing_pad_tf" args="0 0 0 0 0 0 $(arg camera_frame) $(arg landing_pad_frame) 100"/>
 
   <node name="detector" pkg="apriltag_detect" type="detector" output="screen">
     <param name="parent_frame"      value="$(arg camera_frame)" />

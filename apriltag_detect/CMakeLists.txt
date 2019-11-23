@@ -24,6 +24,17 @@ pkg_search_module(apriltag REQUIRED apriltag)
 set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
 link_directories(${apriltag_LIBDIR})
 
+add_message_files(
+  FILES
+  graphing.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  geometry_msgs
+)
+
 catkin_package(
  INCLUDE_DIRS include
  CATKIN_DEPENDS
@@ -31,15 +42,19 @@ catkin_package(
    geometry_msgs
    image_transport
    roscpp
+   rospy
    sensor_msgs
    std_msgs
    tf
+   message_runtime
  DEPENDS
    OpenCV
    apriltag
  LIBRARIES
   ${PROJECT_NAME}_tag_detector
 )
+
+
 
 include_directories(
   include

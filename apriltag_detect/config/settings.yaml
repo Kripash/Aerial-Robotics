@@ -1,5 +1,5 @@
-tag_family:         'tag16h5'  # options: tagStandard52h13, tagStandard41h12, tag36h11, tag25h9, tag16h5
-tag_id:             4
+tag_family:         'tagStandard41h12'  # options: tagStandard52h13, tagStandard41h12, tag36h11, tag25h9, tag16h5
+tag_id:             2
 tag_size:           0.07
 
 tag_threads:        4          # default: 2

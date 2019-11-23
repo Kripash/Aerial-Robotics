@@ -1,0 +1,9 @@
+float64 point1_x 
+float64 point1_y 
+float64 point2_x 
+float64 point2_y 
+float64 point3_x 
+float64 point3_y 
+float64 point4_x 
+float64 point4_y
+bool plot
