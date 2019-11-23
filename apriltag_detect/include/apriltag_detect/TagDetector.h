@@ -16,14 +16,16 @@
 #include <image_transport/image_transport.h>
 #include <image_geometry/pinhole_camera_model.h>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
 #include <apriltag_detect/graphing.h>
 
-#define ERROR_THRESHOLD 0.001
+//#define ERROR_THRESHOLD 0.001
 
 using std::string;
 
@@ -35,6 +37,8 @@ private:
   ros::Subscriber sub_;
   ros::Publisher pose_publisher_;
   ros::Publisher est_pose_publisher_;
+  ros::Publisher tag_detected_publisher_;
+  ros::Publisher points_publisher_;
   tf::TransformBroadcaster br_;
   tf::StampedTransform transform_;
   image_transport::ImageTransport it_;

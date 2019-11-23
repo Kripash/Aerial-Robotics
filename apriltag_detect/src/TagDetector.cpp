@@ -103,6 +103,8 @@ void TagDetector::init(){
     "image_rect", 1, &TagDetector::detectTag, this);
   pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>(pose_topic_, 100);
   est_pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>( std::string("estimated_") + landing_pad_frame_, 100);
+  tag_detected_publisher_ = nh_->advertise<sensor_msgs::Image>("tag_detection", 1);
+  points_publisher_= nh_->advertise<apriltag_detect::graphing>("graphing_points",1);
 }
 
 void TagDetector::detectTag(
@@ -113,7 +115,7 @@ void TagDetector::detectTag(
   tf::Transform transform;
   tf::Quaternion q;
   try {
-    cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::MONO8);
+    cv_ptr = cv_bridge::toCvCopy(image, image->encoding);
   } catch (cv_bridge::Exception& e) {
     ROS_ERROR("cv_bridge exception: %s", e.what());
     return;
@@ -155,6 +157,37 @@ void TagDetector::detectTag(
       info.cx = cx;
       info.cy = cy;
       double err = estimate_tag_pose(&info, &pose);
+
+      cv::line(cv_ptr->image, cv::Point((int)det->p[0][0], (int)det->p[0][1]),
+         cv::Point((int)det->p[1][0], (int)det->p[1][1]),
+         cv::Scalar(255, 0, 0));
+
+      cv::line(cv_ptr->image, cv::Point((int)det->p[0][0], (int)det->p[0][1]),
+         cv::Point((int)det->p[3][0], (int)det->p[3][1]),
+         cv::Scalar(255, 0, 0));      
+
+      cv::line(cv_ptr->image, cv::Point((int)det->p[1][0], (int)det->p[1][1]),
+         cv::Point((int)det->p[2][0], (int)det->p[2][1]),
+         cv::Scalar(255, 0, 0));             
+
+      cv::line(cv_ptr->image, cv::Point((int)det->p[2][0], (int)det->p[2][1]),
+         cv::Point((int)det->p[3][0], (int)det->p[3][1]),
+         cv::Scalar(255, 0, 0));     
+
+      apriltag_detect::graphing points;
+      points.point1_x = static_cast<int>(det->p[0][0]);
+      points.point1_y = static_cast<int>(det->p[0][1]);
+
+      points.point2_x = static_cast<int>(det->p[1][0]);
+      points.point2_y = static_cast<int>(det->p[1][1]);
+
+      points.point3_x = static_cast<int>(det->p[2][0]);
+      points.point3_y = static_cast<int>(det->p[2][1]);
+
+      points.point4_x = static_cast<int>(det->p[3][0]);
+      points.point4_y = static_cast<int>(det->p[3][1]);
+
+      points_publisher_.publish(points);
 
       #ifdef ERROR_THRESHOLD
       if(err < ERROR_THRESHOLD)
@@ -198,6 +231,7 @@ void TagDetector::detectTag(
       }
     }
   }
+  tag_detected_publisher_.publish(cv_ptr->toImageMsg());
 }
 
 int TagDetector::idComparison(const void* first, const void* second)
