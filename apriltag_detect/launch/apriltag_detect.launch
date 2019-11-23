@@ -15,10 +15,10 @@
     <!--param name="family"            value="tagStandard41h12" /-->
     <param name="family"            value="tag16h5" />
     <param name="tag_threads"       value="4" />
-    <param name="tag_decimate"      value="1.0" />
-    <param name="tag_blur"          value="1.0" />
+    <param name="tag_decimate"      value="0.0" />
+    <param name="tag_blur"          value="0.0" />
     <param name="debug"             value="0" />
-    <param name="refine_edges"      value="0" />
+    <param name="refine_edges"      value="1" />
     <param name="tag_id"            value="4" />
     <param name="pose_topic"        value="pose" />
     <param name="landing_pad_frame" value="$(arg landing_pad_frame)"/>

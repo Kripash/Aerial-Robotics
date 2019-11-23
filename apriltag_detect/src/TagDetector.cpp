@@ -175,17 +175,17 @@ void TagDetector::detectTag(
          cv::Scalar(255, 0, 0));     
 
       apriltag_detect::graphing points;
-      points.point1_x = static_cast<int>(det->p[0][0]);
-      points.point1_y = static_cast<int>(det->p[0][1]);
+      points.point1_x = static_cast<uint32_t>(det->p[0][0]);
+      points.point1_y = static_cast<uint32_t>(det->p[0][1]);
 
-      points.point2_x = static_cast<int>(det->p[1][0]);
-      points.point2_y = static_cast<int>(det->p[1][1]);
+      points.point2_x = static_cast<uint32_t>(det->p[1][0]);
+      points.point2_y = static_cast<uint32_t>(det->p[1][1]);
 
-      points.point3_x = static_cast<int>(det->p[2][0]);
-      points.point3_y = static_cast<int>(det->p[2][1]);
+      points.point3_x = static_cast<uint32_t>(det->p[2][0]);
+      points.point3_y = static_cast<uint32_t>(det->p[2][1]);
 
-      points.point4_x = static_cast<int>(det->p[3][0]);
-      points.point4_y = static_cast<int>(det->p[3][1]);
+      points.point4_x = static_cast<uint32_t>(det->p[3][0]);
+      points.point4_y = static_cast<uint32_t>(det->p[3][1]);
 
       points_publisher_.publish(points);
 
