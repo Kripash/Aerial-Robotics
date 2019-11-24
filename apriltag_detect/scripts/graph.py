@@ -100,7 +100,7 @@ def PlotCallback(data):
     print output
     """
 
-def testFunction(event):
+def plotFunction(event):
     global data_array 
     global time_set
     if(time_set == None):
@@ -118,7 +118,7 @@ def testFunction(event):
 def main():
     rospy.init_node('graph', anonymous=True)
     rospy.Subscriber('/detector/graphing_points', graphing, PlotCallback, queue_size=100)
-    my_timer = rospy.Timer(rospy.Duration(1.0), testFunction);
+    my_timer = rospy.Timer(rospy.Duration(1.0), plotFunction)
     # rospy.spin()
     plt.close('all')
     plt.ion()
