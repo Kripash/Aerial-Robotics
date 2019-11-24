@@ -6,12 +6,15 @@ from matplotlib.animation import FuncAnimation
 from apriltag_detect.msg import graphing
 import cv2
 import numpy as np
+import time
 
 
 #fig, ax = plt.subplots()
 #xdata, ydata = [], []
 #ln, = plt.plot(xdata, ydata, 'r.')
 plt.close('all')
+data_array = []
+time_set = None
 
 def init():
     ax.set_xlim(0, 1280)
@@ -34,16 +37,23 @@ def update(data):
     return ln,
 
 def PlotCallback(data):
+    global data_array
+    global time_set 
+    time_set = time.time()
+    data_array.append((data.point1_x, data.point1_y))
+    data_array.append((data.point2_x, data.point2_y))
+    data_array.append((data.point3_x, data.point3_y))
+    data_array.append((data.point4_x, data.point4_y))
     #update(data)
-    plt.axis([0, 1280, 0, 1024])
-    plt.ylabel('pixels')
-    plt.xlabel('pixels')
-    plt.plot(data.point1_x, data.point1_y, '+', color='b')
-    plt.plot(data.point2_x, data.point2_y, '+', color='b')
-    plt.plot(data.point3_x, data.point3_y, '+', color='b')
-    plt.plot(data.point4_x, data.point4_y, '+', color='b')
-    plt.draw()
-    plt.pause(0.00001)
+    #plt.axis([0, 1280, 0, 1024])
+    #plt.ylabel('pixels')
+    #plt.xlabel('pixels')
+    #plt.plot(data.point1_x, data.point1_y, '+', color='b')
+    #plt.plot(data.point2_x, data.point2_y, '+', color='b')
+    #plt.plot(data.point3_x, data.point3_y, '+', color='b')
+    #plt.plot(data.point4_x, data.point4_y, '+', color='b')
+    #plt.draw()
+    #plt.pause(0.00001)
 
     """
     dist_coeffs = np.array([-0.405611, 0.137384, 0.000752, 0.000797, 0.0], dtype=np.float32)
@@ -90,15 +100,32 @@ def PlotCallback(data):
     print output
     """
 
+def testFunction(event):
+    global data_array 
+    global time_set
+    if(time_set == None):
+        return 
+    if(time.time() - time_set > 10):
+        array = np.array(data_array)
+        plt.axis([0, 1280, 0, 1024])
+        plt.ylabel('pixels')
+        plt.xlabel('pixels')
+        plt.scatter(array[:, 0], array[:, 1], marker="+", color="blue")
+        plt.draw()
+        plt.pause(0.001)
+        plt.clf()
+
 def main():
     rospy.init_node('graph', anonymous=True)
-    rospy.Subscriber('/detector/graphing_points', graphing, PlotCallback, queue_size=10)
+    rospy.Subscriber('/detector/graphing_points', graphing, PlotCallback, queue_size=100)
+    my_timer = rospy.Timer(rospy.Duration(1.0), testFunction);
     # rospy.spin()
     plt.close('all')
     plt.ion()
-    #plt.xlim((0, 1024))
-    #plt.ylim((0, 1280))
-    plt.show()
+    #plt.axis([0, 1280, 0, 1024])
+    #plt.ylabel('pixels')
+    #plt.xlabel('pixels')
+    plt.show()    
     rospy.spin()
 
 if __name__ == '__main__':

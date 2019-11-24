@@ -11,11 +11,11 @@
   <node name="graphing" pkg="apriltag_detect" type="graph.py" output="screen" />
 
   <node name="detector" pkg="apriltag_detect" type="detector" output="screen">
-    <param name="tag_size"          value="0.2286" />
+    <param name="tag_size"          value="0.07" />
     <param name="parent_frame"      value="$(arg camera_frame)" />
     <param name="child_frame"       value="tag4" />
     <param name="family"            value="tagStandard41h12" />
-    <param name="tag_threads"       value="4" />
+    <param name="tag_threads"       value="2" />
     <param name="tag_decimate"      value="0.0" />
     <param name="tag_blur"          value="0.0" />
     <param name="debug"             value="0" />
@@ -28,5 +28,5 @@
     <remap from="camera_info"       to="$(arg camera_name)/$(arg cam_info_topic)" />
   </node>
 
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find apriltag_detect)/rviz/detector.rviz" />
+  <!--node type="rviz" name="rviz" pkg="rviz" args="-d $(find apriltag_detect)/rviz/detector.rviz" /-->
 </launch>
