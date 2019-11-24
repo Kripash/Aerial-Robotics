@@ -27,6 +27,7 @@ link_directories(${apriltag_LIBDIR})
 add_message_files(
   FILES
   graphing.msg
+  error.msg
 )
 
 generate_messages(

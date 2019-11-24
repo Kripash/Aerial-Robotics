@@ -18,6 +18,7 @@ TagDetector::TagDetector(int argc, char** argv):
   nh_->getParam("tag_blur", tag_blur_);
   nh_->getParam("debug", tag_debug_);
   nh_->getParam("refine_edges", tag_refine_edges_);
+  nh_->getParam("error_topic", error_topic_);
 
 
   td_->quad_decimate = static_cast<float>(tag_decimate_);
@@ -105,6 +106,7 @@ void TagDetector::init(){
   est_pose_publisher_ = nh_->advertise<geometry_msgs::PoseStamped>( std::string("estimated_") + landing_pad_frame_, 100);
   tag_detected_publisher_ = nh_->advertise<sensor_msgs::Image>("tag_detection", 1);
   points_publisher_= nh_->advertise<apriltag_detect::graphing>("graphing_points",1);
+  error_publisher_ = nh_->advertise<apriltag_detect::error>(error_topic_, 1);
 }
 
 void TagDetector::detectTag(
@@ -157,7 +159,10 @@ void TagDetector::detectTag(
       info.cx = cx;
       info.cy = cy;
       double err = estimate_tag_pose(&info, &pose);
-
+      apriltag_detect::error error_msg;
+      error_msg.pose_estimation_error = err;
+      error_publisher_.publish(error_msg);
+      
       cv::line(cv_ptr->image, cv::Point((int)det->p[0][0], (int)det->p[0][1]),
          cv::Point((int)det->p[1][0], (int)det->p[1][1]),
          cv::Scalar(255, 0, 0));
