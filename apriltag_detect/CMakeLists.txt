@@ -26,7 +26,6 @@ link_directories(${apriltag_LIBDIR})
 
 add_message_files(
   FILES
-  graphing.msg
   error.msg
 )
 
@@ -54,8 +53,6 @@ catkin_package(
  LIBRARIES
   ${PROJECT_NAME}_tag_detector
 )
-
-
 
 include_directories(
   include

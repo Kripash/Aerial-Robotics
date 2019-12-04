@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /TF1/Frames1
       Splitter Ratio: 0.5
     Tree Height: 260
   - Class: rviz/Selection
@@ -54,7 +53,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /detector/tag_detection
+      Image Topic: /ptgrey_node/cam/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -108,9 +107,9 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: false
+        All Enabled: true
         camera:
-          Value: false
+          Value: true
         landing_pad:
           Value: true
         tag:
@@ -118,8 +117,8 @@ Visualization Manager:
       Marker Scale: 1
       Name: TF
       Show Arrows: true
-      Show Axes: false
-      Show Names: false
+      Show Axes: true
+      Show Names: true
       Tree:
         camera:
           landing_pad:
@@ -171,25 +170,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.142958164215088
+      Distance: 13.169187545776367
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.19628211855888367
-        Y: 0.25539299845695496
-        Z: 0.14739413559436798
+        X: 0
+        Y: 0
+        Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7152024507522583
+      Pitch: 0.7652024030685425
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.784967422485352
+      Yaw: 4.674965858459473
     Saved: ~
 Window Geometry:
   Displays:

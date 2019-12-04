@@ -19,8 +19,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
-#include "apriltag_detect/error.h"
-#include "apriltag_detect/graphing.h"
 
 using std::string;
 
@@ -31,15 +29,12 @@ private:
   ros::NodeHandle nh_;
   ros::Subscriber sub_;
   ros::Publisher pose_publisher_;
-  ros::Publisher error_publisher_;
-  ros::Publisher est_pose_publisher_;
-  ros::Publisher tag_detected_publisher_;
-  ros::Publisher points_publisher_;
   tf::TransformBroadcaster br_;
   tf::StampedTransform transform_;
   image_transport::ImageTransport it_;
   image_transport::CameraSubscriber camera_image_subscriber_;
   zarray_t *detected_tags_;
+
 
   string tag_family_;
   int tag_id_;
@@ -54,7 +49,6 @@ private:
   string parent_frame_;
   string child_frame_;
   string pose_topic_;
-  string error_topic_;
   string landing_pad_frame_;
 
   void detectTag(
