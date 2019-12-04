@@ -23,7 +23,6 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <apriltag_detect/error.h>
 #include <apriltag_detect/graphing.h>
 
 //#define ERROR_THRESHOLD 0.001
@@ -40,7 +39,6 @@ private:
   ros::Publisher est_pose_publisher_;
   ros::Publisher tag_detected_publisher_;
   ros::Publisher points_publisher_;
-  ros::Publisher error_publisher_;
   tf::TransformBroadcaster br_;
   tf::StampedTransform transform_;
   image_transport::ImageTransport it_;
@@ -52,7 +50,6 @@ private:
   std::string tag_family_;
   std::string pose_topic_;
   std::string landing_pad_frame_;
-  std::string error_topic_;
 
   int tag_id_;
   int tag_threads_;
