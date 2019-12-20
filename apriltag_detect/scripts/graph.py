@@ -126,6 +126,7 @@ def main():
     rospy.Subscriber('/detector/graphing_points', graphing, PlotCallback, queue_size=100)
     rospy.Subscriber('/detector/error', error, ErrorCallback, queue_size=100)
     my_timer = rospy.Timer(rospy.Duration(1.0), plotFunction)
+    #my_timer2 = rospy.Timer(rospy.Duration(1.0), plotHistogram)
     # rospy.spin()
     plt.close('all')
     plt.ion()

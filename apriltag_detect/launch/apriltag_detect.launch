@@ -6,21 +6,22 @@
   <arg name="cam_info_topic" default="camera_info"/>
   <arg name="landing_pad_frame" default="landing_pad"/>
 
-  <node pkg="tf" type="static_transform_publisher" name="landing_pad_tf" args="1 1 0 0 0 0 $(arg camera_frame) $(arg landing_pad_frame) 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="landing_pad_tf" args="0 0 0 0 0 0 $(arg camera_frame) $(arg landing_pad_frame) 100"/>
 
   <node name="graphing" pkg="apriltag_detect" type="graph.py" output="screen" />
 
   <node name="detector" pkg="apriltag_detect" type="detector" output="screen">
-    <param name="tag_size"          value="0.07" />
+    <param name="tag_size"          value="0.0525" />
     <param name="parent_frame"      value="$(arg camera_frame)" />
     <param name="child_frame"       value="tag" />
     <param name="family"            value="tagStandard41h12" />
-    <param name="tag_threads"       value="2" />
+    <param name="tag_threads"       value="4" />
     <param name="tag_decimate"      value="0.0" />
     <param name="tag_blur"          value="0.0" />
     <param name="debug"             value="0" />
-    <param name="refine_edges"      value="0" />
-    <param name="tag_id"            value="5" />
+    <param name="refine_edges"      value="1" />
+    <param name="decode_sharpening" value="2.0" />
+    <param name="tag_id"            value="4" />
     <param name="pose_topic"        value="pose" />
     <param name="landing_pad_frame" value="$(arg landing_pad_frame)"/>
     <remap from="image_rect"        to="$(arg camera_name)/$(arg image_topic)" />
@@ -28,4 +29,5 @@
   </node>
 
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find apriltag_detect)/rviz/detector.rviz" />
+  <node name="vicon" pkg="apriltag_detect" type="vicon.py" output="screen" />
 </launch>

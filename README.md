@@ -1,76 +1,40 @@
 # Aerial-Robotics
 Landing of a UAV on a UGV.
 
-## AprilTag 
-This project uses and depends on AprilTags, which is a visual fiducial system research project from the APRIL Robotics Laboratory at the University of Michigan. The package can be retrieved from: 
+## Download package and bag file
+The package can be retrieved from: 
 
-​  https://github.com/AprilRobotics/apriltag
+https://github.com/Kripash/Aerial-Robotics
+
+The bag file with vicon data can be retrieved from:
 
 
 
 ## How to get it to work
 
-### Installs
+1. Build the `apriltag_detect` package.
+2. Launch the launch file via `roslaunch apriltag_detect apriltag_detect.launch` after sourcing the workspace.
+3. Play the downloaded rosbag.
 
-If you do not have `catkin tools` please install from this website: 
+## Expected result
 
-​	https://catkin-tools.readthedocs.io/en/latest/installing.html
+1. Rviz window should open and display the images from the camera, the pose provided by April Tag and the pose provided by the vicon.
+2. Once the rosbag finishes playing, wait for about 5 seconds and a new window displaying the pose estimation error graph will appear.
 
-### Setup
+## Topics
 
-1. Source ROS:
-
-   ```shell
-   source /opt/ros/melodic/setup.bash
-   ```
-
-2. Create a catkin workspace.
-
-   ```shell
-   mkdir landingpad
-   cd landingpad
-   mkdir src
-   catkin init
-   ```
-
-3. Copy the `apriltag_detect` package into your catkin workspace's source space. Your catkin workspace should look like this:
-
-   ```shell
-   landingpad/
-   └── src
-       └── apriltag_detect
-   ```
-
-4. Build your package via the following command:
-
-   ```shell
-   catkin build
-   ```
-   
-   Note, you can still build the package using: 
-   ``` 
-   catkin_make
-   ```
-   However, keep in mind that a workspace must follow either catkin build tools or catkin_make.
-
-5. Source your catkin workspace.
-
-   ```shell
-   source devel/setup.bash
-   ```
-
-6. Run the program.
-
-   ```shell
-   roslaunch apriltag_detect apriltag_detect.launch
-   ```
-
-7. Run the `arl_april.bag`, this bagfile must be downloaded from the shared google drive link:
-
-   ​	https://drive.google.com/drive/folders/1eDRCfzJd5wJxOZvxRea8Wdhmve_Y3qAg?usp=sharing
-
-   ```shell
-   rosbag play arl_april.bag
-   ```
-
-Rviz should be displaying the tag now.
+- `/detector/error`
+  - Only use for evaluation.
+  - Error between the estimated pose from the april tag detection and the position provided by the vicon.
+    Used for plotting point density graph with different colors showing the magnitude of error of each detection.
+- `/detector/estimated_landing_pad`
+  - Estimated pose of the landing pad w.r.t. the april tag frame.
+- `/detector/graphing_points`
+  - Only use for evaluation.
+  - 4 points showing where the tag is detected on the camera.
+  - Used for plotting point density graph.
+- `/detector/pose`
+  - Estimated pose of the april tag w.r.t. the landing pad frame computed using the camera.
+- `/detector/tag_detection`
+  - Images from the camera with a square showing where the tag is detected.
+  - Can be viewed using rviz.

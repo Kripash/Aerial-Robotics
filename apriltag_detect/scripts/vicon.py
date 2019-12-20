@@ -52,8 +52,9 @@ class DronePosition:
 
 
 if __name__ == '__main__':
-    drone = DronePosition(Position(-4.05, 0.43, 0.16))
+    drone = DronePosition(Position(-3.5363, 0.2500, 0.1377))
+    #drone = DronePosition(Position(-4.0544, 0.4307, 0.1574))
     rospy.init_node('graph', anonymous=True)
     rospy.Subscriber('/detector/pose', PoseStamped, drone.cameraCallBack)
-    rospy.Subscriber('/vicon/huan_minidrone2_UP_PLUS/huan_minidrone2_UP_PLUS', TransformStamped, drone.viconCallBack)
+    rospy.Subscriber('/vicon/drone_student/drone_student', TransformStamped, drone.viconCallBack)
     rospy.spin()

@@ -18,13 +18,14 @@ TagDetector::TagDetector(int argc, char** argv):
   nh_->getParam("tag_blur", tag_blur_);
   nh_->getParam("debug", tag_debug_);
   nh_->getParam("refine_edges", tag_refine_edges_);
-
+  nh_->getParam("decode_sharpening", tag_decode_sharpening_);
 
   td_->quad_decimate = static_cast<float>(tag_decimate_);
   td_->quad_sigma = static_cast<float>(tag_blur_);
   td_->nthreads = tag_threads_;
   td_->debug = tag_debug_;
   td_->refine_edges = tag_refine_edges_;
+  td_->decode_sharpening = tag_decode_sharpening_;
 
   tf::TransformListener listener;
   try{

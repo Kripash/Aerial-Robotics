@@ -58,6 +58,7 @@ private:
   double tag_blur_;
   int tag_refine_edges_;
   int tag_debug_;
+  double tag_decode_sharpening_;
 
   void detectTag(
     const sensor_msgs::ImageConstPtr& image,
